@@ -3,6 +3,10 @@
   "version": "0.0.2",
   "main": "index.ts",
   "description": "DOM events via THREE objects",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IldarDavletyarov/three-events"
+  },
   "peerDependencies": {
     "three": "^0.125.2"
   },
