@@ -1,0 +1,15 @@
+{
+  "name": "three-events",
+  "version": "0.0.2",
+  "main": "index.ts",
+  "description": "DOM events via THREE objects",
+  "peerDependencies": {
+    "three": "^0.125.2"
+  },
+  "keywords": [
+    "THREE",
+    "events"
+  ],
+  "author": "ildardev",
+  "license": "MIT"
+}
