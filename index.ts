@@ -1,4 +1,4 @@
-import {Camera, Object3D, Renderer, Raycaster, Vector2, Intersection } from 'three';
+import { Camera, Object3D, Renderer, Raycaster, Vector2 } from 'three';
 
 const raycaster = new Raycaster();
 const mouse = new Vector2();
@@ -24,18 +24,9 @@ const triggerHookedElements = (objects: Object3D[], event: TMouseEvent, renderer
 	mouse.x =   (mouseX / renderer.domElement.width) * 2 - 1;
 	mouse.y = - (mouseY / renderer.domElement.height) * 2 + 1;
 	raycaster.setFromCamera( mouse, camera );
-
-	const intersects: Intersection[] = raycaster.intersectObjects(objects, recursiveFlag);
-
-	intersects.forEach(el => {
+	raycaster.intersectObjects(objects, recursiveFlag).forEach(el => {
 		callback(event, el.object);
 	});
-};
-
-const factoryHandler = (objects: Object3D[], eventType: string, renderer: Renderer, camera: Camera, callback: TCallback, recursiveFlag: boolean) => {
-	return (event: Event) => {
-		triggerHookedElements(objects, event as TMouseEvent, renderer, camera, callback, recursiveFlag);
-	};
 };
 
 const hashCode = (string: string) => {
@@ -62,8 +53,11 @@ export default class ThreeEvents {
 		this.recursiveFlag = recursiveFlag;
 	}
 
-	public addEventListener(objects: Object3D[], eventType: string, callback: TCallback) {
-		const handler = factoryHandler(objects, eventType, this.renderer, this.camera, callback, this.recursiveFlag);
+	public addEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback) {
+		if (!Array.isArray(objects)) {
+			objects = [objects];
+		}
+		const handler = (event: Event) => { triggerHookedElements(objects, event as TMouseEvent, this.renderer, this.camera, callback, this.recursiveFlag); };
 		this.callbackList.push({
 			callback: hashCode(callback.toString()),
 			objectsId: objects.map(_ => _.id),
@@ -73,7 +67,10 @@ export default class ThreeEvents {
 		this.renderer.domElement.addEventListener(eventType, handler);
 	}
 
-	public removeEventListener(objects: Object3D[], eventType: string, callback: TCallback) {
+	public removeEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback) {
+		if (!Array.isArray(objects)) {
+			objects = [objects];
+		}
 		const callbackItem = this.callbackList.find(_ =>
 			_.eventType === hashCode(eventType) &&
 			_.objectsId.length === objects.length && _.objectsId.every((val, i) => val === objects[i].id) &&
