@@ -12,7 +12,11 @@
   },
   "keywords": [
     "THREE",
-    "events"
+    "events",
+    "listen",
+    "handler",
+    "js",
+    "ts"
   ],
   "author": "ildardev",
   "license": "MIT"
