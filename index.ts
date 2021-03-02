@@ -53,7 +53,7 @@ export default class ThreeEvents {
 		this.recursiveFlag = recursiveFlag;
 	}
 
-	public addEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback) {
+	public addEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback, ...options: any[]) {
 		if (!Array.isArray(objects)) {
 			objects = [objects];
 		}
@@ -64,10 +64,10 @@ export default class ThreeEvents {
 			handler,
 			eventType: hashCode(eventType),
 		});
-		this.renderer.domElement.addEventListener(eventType, handler);
+		this.renderer.domElement.addEventListener(eventType, handler, ...options);
 	}
 
-	public removeEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback) {
+	public removeEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback, ...options: any[]) {
 		if (!Array.isArray(objects)) {
 			objects = [objects];
 		}
@@ -76,7 +76,7 @@ export default class ThreeEvents {
 			_.objectsId.length === objects.length && _.objectsId.every((val, i) => val === objects[i].id) &&
 			_.callback === hashCode(callback.toString()));
 		if (callbackItem) {
-			this.renderer.domElement.removeEventListener(eventType, callbackItem.handler);
+			this.renderer.domElement.removeEventListener(eventType, callbackItem.handler, ...options);
 			const index = this.callbackList.indexOf(callbackItem);
 			if (index > -1) {
 				this.callbackList.splice(index, 1);
