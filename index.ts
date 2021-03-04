@@ -13,7 +13,7 @@ interface TMouseEvent extends Event {
 type TCallbackItem = {
 	callback: number;
 	objectsId: number[];
-	eventType: number;
+	type: number;
 	handler: (event: Event) => void;
 };
 
@@ -53,7 +53,7 @@ export default class ThreeEvents {
 		this.recursiveFlag = recursiveFlag;
 	}
 
-	public addEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback, ...options: any[]) {
+	public addEventListener(objects: Object3D[] | Object3D, type: string, callback: TCallback, ...options: any[]) {
 		if (!Array.isArray(objects)) {
 			objects = [objects];
 		}
@@ -62,21 +62,21 @@ export default class ThreeEvents {
 			callback: hashCode(callback.toString()),
 			objectsId: objects.map(_ => _.id),
 			handler,
-			eventType: hashCode(eventType),
+			type: hashCode(type),
 		});
-		this.renderer.domElement.addEventListener(eventType, handler, ...options);
+		this.renderer.domElement.addEventListener(type, handler, ...options);
 	}
 
-	public removeEventListener(objects: Object3D[] | Object3D, eventType: string, callback: TCallback, ...options: any[]) {
+	public removeEventListener(objects: Object3D[] | Object3D, type: string, callback: TCallback, ...options: any[]) {
 		if (!Array.isArray(objects)) {
 			objects = [objects];
 		}
 		const callbackItem = this.callbackList.find(_ =>
-			_.eventType === hashCode(eventType) &&
+			_.type === hashCode(type) &&
 			_.objectsId.length === objects.length && _.objectsId.every((val, i) => val === objects[i].id) &&
 			_.callback === hashCode(callback.toString()));
 		if (callbackItem) {
-			this.renderer.domElement.removeEventListener(eventType, callbackItem.handler, ...options);
+			this.renderer.domElement.removeEventListener(type, callbackItem.handler, ...options);
 			const index = this.callbackList.indexOf(callbackItem);
 			if (index > -1) {
 				this.callbackList.splice(index, 1);
