@@ -1,15 +1,14 @@
 # THREE-events
 ## Install
     npm i three-events
-## Example
-### Import:
+## Import
     import ThreeEvents from 'three-events'
-### Initialize three-events: (renderer, camera[, recursiveFlag])
+## Initialize (renderer, camera[, recursiveFlag])
     const threeEvents = new ThreeEvents(
         new THREE.WebGLRenderer(),
         new THREE.Camera()
     )
-### addEventListener: (object | objects, type, callback[, options])
+## addEventListener (object | objects, type, callback[, options])
     const geometry = new THREE.BoxGeometry(1, 1, 1)
     const material = new THREE.MeshBasicMaterial({ color: #fff })
     const cube = new THREE.Mesh(geometry, material)
@@ -18,7 +17,7 @@
     threeEvents.addEventListener(cube, 'mousemove', handler)
 ##### The callback is called with parameters (event, object)
 ##### options is for default target.addEventListener(type, listener[, *options*]);    
-### removeEventListener: (object | objects, type, callback[, options])
+## removeEventListener (object | objects, type, callback[, options])
 ##### Works also for anonymous functions!
     threeEvents.removeEventListener(cube, 'mousemove', handler);
 ###### Removing a listener will only work if the object's IDs are the same as when the listener was added!
