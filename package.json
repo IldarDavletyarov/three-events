@@ -1,11 +1,17 @@
 {
   "name": "three-events",
-  "version": "0.0.10",
-  "main": "index.ts",
+  "version": "1.0.0",
+  "main": "dist/index.min.js",
+  "types": "dist/index.d.ts",
   "description": "DOM events via THREE objects",
   "repository": {
     "type": "git",
     "url": "https://github.com/IldarDavletyarov/three-events"
+  },
+  "devDependencies": {
+    "typescript": "^2.7.2",
+    "three": "^0.125.2",
+    "uglify-js": "^3.13.0"
   },
   "peerDependencies": {
     "three": "^0.125.2"

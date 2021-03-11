@@ -1,4 +1,4 @@
-import { Camera, Object3D, Renderer, Raycaster, Vector2 } from 'three';
+import { Camera, Object3D, Renderer, Raycaster, Vector2, Intersection } from 'three';
 
 const raycaster = new Raycaster();
 const mouse = new Vector2();
@@ -17,6 +17,12 @@ type TCallbackItem = {
 	handler: (event: Event) => void;
 };
 
+const toArray = (objects: Object3D[] | Object3D): Object3D[] => {
+	return Array.isArray(objects)
+		? objects
+		: [objects];
+};
+
 const triggerHookedElements = (objects: Object3D[], event: TMouseEvent, renderer: Renderer, camera: Camera, callback: TCallback, recursiveFlag: boolean) =>
 {
 	const mouseX = event?.clientX - renderer.domElement.getBoundingClientRect().left;
@@ -24,7 +30,7 @@ const triggerHookedElements = (objects: Object3D[], event: TMouseEvent, renderer
 	mouse.x =   (mouseX / renderer.domElement.width) * 2 - 1;
 	mouse.y = - (mouseY / renderer.domElement.height) * 2 + 1;
 	raycaster.setFromCamera( mouse, camera );
-	raycaster.intersectObjects(objects, recursiveFlag).forEach(el => {
+	raycaster.intersectObjects(objects, recursiveFlag).forEach((el: Intersection) => {
 		callback(event, el.object);
 	});
 };
@@ -44,7 +50,6 @@ export default class ThreeEvents {
 	renderer !: Renderer;
 	camera !: Camera;
 	recursiveFlag !: boolean;
-
 	callbackList: TCallbackItem[] = [];
 
 	constructor(renderer: Renderer, camera: Camera, recursiveFlag = false) {
@@ -54,13 +59,13 @@ export default class ThreeEvents {
 	}
 
 	public addEventListener(objects: Object3D[] | Object3D, type: string, callback: TCallback, ...options: any[]) {
-		if (!Array.isArray(objects)) {
-			objects = [objects];
-		}
-		const handler = (event: Event) => { triggerHookedElements(objects, event as TMouseEvent, this.renderer, this.camera, callback, this.recursiveFlag); };
+		const objectsArray = toArray(objects);
+		const handler = (event: Event) => {
+			triggerHookedElements(objectsArray, event as TMouseEvent, this.renderer, this.camera, callback, this.recursiveFlag);
+		};
 		this.callbackList.push({
 			callback: hashCode(callback.toString()),
-			objectsId: objects.map(_ => _.id),
+			objectsId: objectsArray.map((_: Object3D) => _.id),
 			handler,
 			type: hashCode(type),
 		});
@@ -68,12 +73,10 @@ export default class ThreeEvents {
 	}
 
 	public removeEventListener(objects: Object3D[] | Object3D, type: string, callback: TCallback, ...options: any[]) {
-		if (!Array.isArray(objects)) {
-			objects = [objects];
-		}
-		const callbackItem = this.callbackList.find(_ =>
+		const objectsArray = toArray(objects);
+		const callbackItem = this.callbackList.find((_: TCallbackItem) =>
 			_.type === hashCode(type) &&
-			_.objectsId.length === objects.length && _.objectsId.every((val, i) => val === objects[i].id) &&
+			_.objectsId.length === objectsArray.length && _.objectsId.every((val: number, i: number) => val === objectsArray[i].id) &&
 			_.callback === hashCode(callback.toString()));
 		if (callbackItem) {
 			this.renderer.domElement.removeEventListener(type, callbackItem.handler, ...options);
