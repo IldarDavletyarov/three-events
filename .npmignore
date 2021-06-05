@@ -3,3 +3,4 @@ tsconfig.json
 .gitignore
 dist/index.js
 index.ts
+node_modules
